@@ -1,0 +1,4 @@
+#Building Homevee package for PYPI
+sudo python setup.py sdist bdist_wheel
+twine upload dist/*
+curl -X PURGE https://pypi.org/simple/WPBackupTool/
