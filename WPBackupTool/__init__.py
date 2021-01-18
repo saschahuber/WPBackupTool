@@ -41,13 +41,15 @@ class WPBackupTool():
 
 
     def doWebsiteBackup(self, website_config):
-        use_sftp = website_config['use_sftp']
+        use_sftp = False
         backup_path = website_config['backup_path']
         backup_name = website_config['backup_name']
 
         ftp_data = None
         if 'ftp_data' in website_config and website_config['ftp_data'] is not None:
                 ftp_data = website_config['ftp_data']
+                if 'use_sftp' in ftp_data and ftp_data['use_sftp']:
+                    use_sftp = ftp_data['use_sftp']
 
         db_data = None
         if 'db_data' in website_config and website_config['db_data'] is not None:
@@ -107,7 +109,8 @@ class WPBackupTool():
             if db_success and ftp_success:
                 ZipCompression(backup_path_done).compress(delete_source=True)
             else:
-                shutil.move(os.path.join(backup_path, backup_name, backupChildDir + "_done"), os.path.join(backup_path, backup_name, backupChildDir + "_error"))
+                backup_path_error = os.path.join(backup_path, backup_name, backupChildDir + "_error")
+                shutil.move(backup_path_done, backup_path_error)
 
     def doDbBackups(self, db_data, backup_path, backup_name):
         db_fails = ""

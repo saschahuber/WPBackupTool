@@ -10,7 +10,7 @@ from WPBackupTool.Utils import Logger
 def main():
     # parse args
     parser = argparse.ArgumentParser(description='Create a backup of your wordpress site!')
-    parser.add_argument('--config', type=str, help='Path to the json-config-file')
+    parser.add_argument('--config', required=True, type=str, help='Path to the json-config-file')
     parser.add_argument('--skipDb', action='store_true', help='Skip db-backup?')
     parser.add_argument('--skipFtp', action='store_true', help='Skip ftp-backup?')
     parser.add_argument('--multithreading', action='store_true', help='Do all Backups in parrallel?')
