@@ -46,14 +46,14 @@ class FTPConfig:
             password = config['ftp_data']['password']
             use_sftp = config['ftp_data']['use_sftp']
             server_dir = config['ftp_data']['server_dir']
-            ignore_dirs = config['ftp_data']['ignore_dirs']
+            ignore_dirs = Helper.get_value_from_dict_path(config, ['ftp_data', 'ignore_dirs'], [])
 
             if host is None or username is None or password is None or server_dir is None:
                 raise AttributeError()
 
             return FTPConfig(host, username, password, use_sftp, server_dir, ignore_dirs)
         except:
-            raise AttributeError("No DB credentials in config file")
+            raise AttributeError("No FTP credentials in config file")
 
 class Config:
     def __init__(self, backup_name, backup_path, db_configs, ftp_config):
