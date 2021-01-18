@@ -61,8 +61,8 @@ class WPBackupTool():
         db_success = False
         ftp_success = False
 
-        backupChildDir = backup_name + "_" + time.strftime('%Y-%m-%d')
-        total_backup_path = os.path.join(backup_path, backup_name, backupChildDir)
+        backup_child_dir = backup_name + "_" + time.strftime('%Y-%m-%d')
+        total_backup_path = os.path.join(backup_path, backup_name, backup_child_dir)
 
         ftp_backup_path = os.path.join(total_backup_path, backup_name)
         db_backup_path = os.path.join(total_backup_path, "db")
@@ -79,7 +79,7 @@ class WPBackupTool():
 
             ftp_success_log, ftp_errors, ftp_success = self.do_ftp_backup(ftp_config, backup_name, ftp_backup_path)
 
-            backup_path_done = os.path.join(backup_path, backup_name, backupChildDir + "_done")
+            backup_path_done = os.path.join(backup_path, backup_name, backup_child_dir + "_done")
 
             Logger.log(total_backup_path+" ==> "+backup_path_done)
 
@@ -106,7 +106,7 @@ class WPBackupTool():
             if db_success and ftp_success:
                 ZipCompression(backup_path_done).compress(delete_source=True)
             else:
-                backup_path_error = os.path.join(backup_path, backup_name, backupChildDir + "_error")
+                backup_path_error = os.path.join(backup_path, backup_name, backup_child_dir + "_error")
                 shutil.move(backup_path_done, backup_path_error)
 
     def do_db_backups(self, db_configs, backup_path, backup_name):
