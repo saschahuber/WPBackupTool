@@ -5,55 +5,52 @@ import traceback
 from threading import Thread
 
 from WPBackupTool.Utils import Helper
-from WPBackupTool.Utils.DBBackup import DBBackup
-from WPBackupTool.Utils.FTPBackup import FTPBackup
+from WPBackupTool.Engine.DBBackup import DBBackup
+from WPBackupTool.Engine.FTPBackup import FTPBackup
 from WPBackupTool.Utils.Logger import Logger
-from WPBackupTool.Utils.SFTPBackup import SFTPBackup
+from WPBackupTool.Engine.SFTPBackup import SFTPBackup
 from WPBackupTool.Utils.ZipCompression import ZipCompression
 
 
 class WPBackupTool():
-    def __init__(self, config, skipDb=False, skipFtp=False, multithreading=False):
-        self.config = config
-        self.skipDb = skipDb
-        self.skipFtp = skipFtp
+    def __init__(self, configs, skip_db=False, skip_ftp=False, multithreading=False):
+        self.configs = configs
         self.multithreading = multithreading
+        self.skip_db = skip_db
+        self.skip_ftp = skip_ftp
 
-        Logger.log("Skipping db backup: "+str(self.skipDb))
-        Logger.log("Skipping ftp backup: "+str(self.skipFtp))
+        Logger.log("Skipping db backup: "+str(self.skip_db))
+        Logger.log("Skipping ftp backup: "+str(self.skip_ftp))
 
-    def doWebsiteBackups(self):
+    def do_website_backups(self):
         threads = []
 
-        for website_config in self.config:
+        for website_config in self.configs:
             if(self.multithreading):
-                thread = Thread(target=self.doWebsiteBackup, args=(website_config,))
+                thread = Thread(target=self.do_website_backup, args=(website_config,))
 
                 threads.append(thread)
 
                 thread.start()
             else:
-                self.doWebsiteBackup(website_config)
+                self.do_website_backup(website_config)
 
         #Wait for all threads to finish
         for thread in threads:
             thread.join()
 
 
-    def doWebsiteBackup(self, website_config):
-        use_sftp = False
-        backup_path = website_config['backup_path']
-        backup_name = website_config['backup_name']
+    def do_website_backup(self, website_config):
+        backup_path = website_config.backup_path
+        backup_name = website_config.backup_name
 
-        ftp_data = None
-        if 'ftp_data' in website_config and website_config['ftp_data'] is not None:
-                ftp_data = website_config['ftp_data']
-                if 'use_sftp' in ftp_data and ftp_data['use_sftp']:
-                    use_sftp = ftp_data['use_sftp']
+        ftp_config = None
+        if website_config.ftp_config is not None:
+            ftp_config = website_config.ftp_config
 
-        db_data = None
-        if 'db_data' in website_config and website_config['db_data'] is not None:
-            db_data = website_config['db_data']
+        db_configs = None
+        if website_config.db_configs is not None:
+            db_configs = website_config.db_configs
 
         if not os.path.isdir(backup_path):
             Helper.mkdir_p(backup_path)
@@ -76,11 +73,11 @@ class WPBackupTool():
             Helper.mkdir_p(db_backup_path)
 
             Logger.log("saving sql-files to " + db_backup_path)
-            db_fails = self.doDbBackups(db_data, db_backup_path, backup_name)
+            db_fails = self.do_db_backups(db_configs, db_backup_path, backup_name)
 
             db_success = db_fails==""
 
-            ftp_success_log, ftp_errors, ftp_success = self.doFtpBackup(ftp_data, use_sftp, backup_name, ftp_backup_path)
+            ftp_success_log, ftp_errors, ftp_success = self.do_ftp_backup(ftp_config, backup_name, ftp_backup_path)
 
             backup_path_done = os.path.join(backup_path, backup_name, backupChildDir + "_done")
 
@@ -112,18 +109,14 @@ class WPBackupTool():
                 backup_path_error = os.path.join(backup_path, backup_name, backupChildDir + "_error")
                 shutil.move(backup_path_done, backup_path_error)
 
-    def doDbBackups(self, db_data, backup_path, backup_name):
+    def do_db_backups(self, db_configs, backup_path, backup_name):
         db_fails = ""
-        if not self.skipDb and db_data is not None:
-            for db in db_data:
-                if 'backup_name' in db and db['backup_name'] is not None:
-                    db_backup_name = db['backup_name']
-                else:
-                    db_backup_name = backup_name
+        if not self.skip_db and db_configs is not None:
+            for db in db_configs:
+                db_backup_name = backup_name
 
-                dbBackup = DBBackup(db['host'], db['user'],
-                                    db['db_name'], db['password'], backup_path, db_backup_name)
-                db_backup_success = dbBackup.databaseBackup()
+                db_backup = DBBackup(db.host, db.user, db.name, db.password, backup_path, db_backup_name)
+                db_backup_success = db_backup.databaseBackup()
 
                 if (db_backup_success is False):
                     if (db_fails == ""):
@@ -133,29 +126,28 @@ class WPBackupTool():
 
         return db_fails
 
-    def doFtpBackup(self, ftp_data, use_sftp, backup_name, backup_path):
+    def do_ftp_backup(self, ftp_config, backup_name, backup_path):
         ftp_success_log = ""
         ftp_errors = ""
         error_filenames = []
 
-        if (not self.skipFtp and ftp_data is not None):
+        if not self.skip_ftp and ftp_config is not None:
             ignore_dirs = None
-            if ('ignore_dirs' in ftp_data):
-                ignore_dirs = ftp_data['ignore_dirs']
+            if ftp_config.ignore_dirs is not None:
+                ignore_dirs = ftp_config.ignore_dirs
 
             Logger.log("saving ftp-files to " + backup_path)
 
-            if (use_sftp):
+            if ftp_config.use_sftp:
                 print("Using SFTP...")
-                ftpBackup = SFTPBackup(backup_name)
+                ftp_backup = SFTPBackup(backup_name)
             else:
                 print("Using FTP...")
-                ftpBackup = FTPBackup(backup_name)
+                ftp_backup = FTPBackup(backup_name)
 
-            successful, errors, error_filenames = ftpBackup.startBackup(ftp_data['host'], ftp_data['user'],
-                                                                         ftp_data['password'],
-                                                                         ftp_data['server_dir'],
-                                                                         backup_path, ignore_dirs, interval=0.01)
+            successful, errors, error_filenames = ftp_backup.startBackup(ftp_config.host, ftp_config.username,
+                                                                        ftp_config.password, ftp_config.server_dir,
+                                                                        backup_path, ignore_dirs, interval=0.01)
 
             if (successful + errors) > 0:
                 success_rate = (float(successful) / (successful + errors)) * 100

@@ -2,7 +2,7 @@
 A Wordpress Backup Tool
 
 #Usage
-WPBackupTool --config=[PATH_TO_CONFIG_JSON] [--skipDb] [--skipFtp] [--multithreading] [--logging]
+WPBackupTool --config=[PATH_TO_CONFIG_JSON] [--skip_db] [--skip_ftp] [--multithreading] [--logging]
 
 Example Config-file:
 [

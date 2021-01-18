@@ -7,6 +7,15 @@ import shutil
 
 from WPBackupTool.Utils.Logger import Logger
 
+def get_value_from_dict_path(dict, path, default_value=None):
+    value = dict
+    try:
+        for path_part in path:
+            value = value[path_part]
+        if value is not None:
+            return value
+    except:
+        return default_value
 
 def getFreeSpaceMb(dirname):
     """Return folder/drive free space (in megabytes)."""
