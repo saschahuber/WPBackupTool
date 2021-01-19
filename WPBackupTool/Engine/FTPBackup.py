@@ -88,8 +88,10 @@ class FTPBackup:
         try:
             ftp = ftplib.FTP_TLS(host)
             ftp.login(user, password)
+            Logger.log("Using FTP over TLS...", "FTPBackup")
         except:
             ftp = ftplib.FTP(host)
             ftp.login(user, password)
+            Logger.log("Using FTP...", "FTPBackup")
 
         return self.downloadFTPFiles(ftp, serverDir, localDir, serverDir, ignore_dirs=ignore_dirs, interval=interval)
