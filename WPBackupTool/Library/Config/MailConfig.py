@@ -24,6 +24,6 @@ class MailConfig:
         receiver_mail = config["receiver"]["mail"]
 
         if sender_name is None or sender_mail is None or receiver_name is None or receiver_mail is None:
-            raise AttributeError()
+            return None
 
         return MailConfig(only_report_error, smpt_config, sender_name, sender_mail, receiver_name, receiver_mail)

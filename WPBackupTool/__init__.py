@@ -35,6 +35,9 @@ class WPBackupTool():
     def send_backup_result_mail(self, results):
         mail_config = self.config.mail_config
 
+        if mail_config is None:
+            return
+
         mail_service = MailService(mail_config.smpt_config,
                                    mail_config.sender_name,
                                    mail_config.sender_mail)

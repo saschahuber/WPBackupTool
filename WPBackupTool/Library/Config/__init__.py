@@ -14,6 +14,11 @@ class Config:
     def from_config_file(path):
         with open(path) as json_file:
             config_data = json.load(json_file)
-            mail_config = MailConfig.from_config(config_data['mail'])
+
+            if 'mail' in config_data:
+                mail_config = MailConfig.from_config(config_data['mail'])
+            else:
+                mail_config = None
+
             backup_configs = BackupConfig.from_config(config_data['backups'])
             return Config(mail_config, backup_configs)
