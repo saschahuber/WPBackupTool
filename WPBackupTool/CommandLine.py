@@ -1,11 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import argparse
-import json
 
 from WPBackupTool import WPBackupTool
+from WPBackupTool.Library.Config import Config
 from WPBackupTool.Utils import Logger
-from WPBackupTool.Utils.Config import Config
 
 
 def main():
@@ -21,13 +20,13 @@ def main():
 
     config_file = args.config
 
-    configs = Config.from_config_file(config_file)
+    config = Config.from_config_file(config_file)
 
     Logger.LOGGING = args.logging
 
-    wordpressBackup = WPBackupTool(configs, args.skip_db, args.skip_ftp, args.multithreading)
+    wordpressBackup = WPBackupTool(config, args.skip_db, args.skip_ftp, args.multithreading)
 
-    wordpressBackup.do_website_backups()
+    wordpressBackup.start_job()
 
 
 if __name__ == "__main__":
