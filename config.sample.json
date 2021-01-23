@@ -1,24 +1,42 @@
-[
-  {
-    "ftp_data": {
-      "use_sftp": false,
-      "host": "",
-      "user": "",
-      "password": "",
-      "server_dir": "/html/websites/example.com",
-      "ignore_dirs": [
-        "/html/websites/example.com/dir-to-ignore"
-      ]
+{
+  "mail": {
+    "smpt": {
+      "server": "",
+      "port": "",
+      "username": "",
+      "password": ""
     },
-    "db_data": [
-      {
+    "sender": {
+      "name": "",
+      "mail": ""
+    },
+    "receiver": {
+      "name": "",
+      "mail": ""
+    }
+  },
+  "backups": [
+    {
+      "ftp_data": {
+        "use_sftp": false,
         "host": "",
         "user": "",
-        "db_name": "",
-        "password": ""
-      }
-    ],
-    "backup_name": "my-backup",
-    "backup_path": "/backups/websites"
-  }
-]
+        "password": "",
+        "server_dir": "/html/websites/example.com",
+        "ignore_dirs": [
+          "/html/websites/example.com/dir-to-ignore"
+        ]
+      },
+      "db_data": [
+        {
+          "host": "",
+          "user": "",
+          "db_name": "",
+          "password": ""
+        }
+      ],
+      "backup_name": "my-backup",
+      "backup_path": "/backups/websites"
+    }
+  ]
+}
