@@ -113,6 +113,8 @@ class WPBackupTool():
 
         log_path = self.create_log_file(backup_path, backup_name, log_item)
 
+        Logger.log(log_item.to_string(), self.__class__.__name__)
+
         if backup_path_done is not None:
             Logger.log("backup path done: " + backup_path_done)
             shutil.move(log_path, backup_path_done)
@@ -166,7 +168,7 @@ class WPBackupTool():
 
             successful, errors, error_filenames = ftp_backup.startBackup(ftp_config.host, ftp_config.username,
                                                                         ftp_config.password, ftp_config.server_dir,
-                                                                        backup_path, ignore_dirs, interval=0.01)
+                                                                        backup_path, ignore_dirs, interval=0.05)
             ftp_log.success(successful)
             ftp_log.error(errors)
             ftp_log.error_files(error_filenames)

@@ -13,10 +13,17 @@ class FTPConfig:
     @staticmethod
     def from_config(config):
         try:
+            if 'ftp_data' not in config:
+                return None
+
             host = config['ftp_data']['host']
             username = config['ftp_data']['user']
             password = config['ftp_data']['password']
-            use_sftp = config['ftp_data']['use_sftp']
+
+            use_sftp = False
+            if 'use_sftp' in config['ftp_data']:
+                use_sftp = config['ftp_data']['use_sftp']
+
             server_dir = config['ftp_data']['server_dir']
             ignore_dirs = Helper.get_value_from_dict_path(config, ['ftp_data', 'ignore_dirs'], [])
 

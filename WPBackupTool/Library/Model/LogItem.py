@@ -21,10 +21,10 @@ class LogItem:
         complete_log = "Log von Backup (" + self.backup_name + "):"
 
         if self.db_log is not None:
-            complete_log += new_line+"DB: " + self.db_log.to_string(html)
+            complete_log += new_line+" - DB: " + self.db_log.to_string(html)
 
         if self.ftp_log is not None:
-            complete_log += new_line+"FTP: " + self.ftp_log.to_string(html)
+            complete_log += new_line+" - FTP: " + self.ftp_log.to_string(html)
 
         return complete_log
 
