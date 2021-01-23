@@ -1,10 +1,13 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 import argparse
 
 from WPBackupTool import WPBackupTool
+from WPBackupTool.Library.Config import Config
 from WPBackupTool.Utils import Logger
-from WPBackupTool.Utils.Config import Config
 
-if __name__ == "__main__":
+
+def main():
     # parse args
     parser = argparse.ArgumentParser(description='Create a backup of your wordpress site!')
     parser.add_argument('--config', required=True, type=str, help='Path to the json-config-file')
@@ -17,10 +20,14 @@ if __name__ == "__main__":
 
     config_file = args.config
 
-    configs = Config.from_config_file(config_file)
+    config = Config.from_config_file(config_file)
 
     Logger.LOGGING = args.logging
 
-    wordpressBackup = WPBackupTool(configs, args.skip_db, args.skip_ftp, args.multithreading)
+    wordpressBackup = WPBackupTool(config, args.skip_db, args.skip_ftp, args.multithreading)
 
-    wordpressBackup.do_website_backups()
+    wordpressBackup.start_job()
+
+
+if __name__ == "__main__":
+    main()
