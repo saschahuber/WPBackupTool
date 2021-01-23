@@ -21,4 +21,6 @@ class FTPLog:
         if html:
             new_line = "<br>"
 
-        return "FTPLog"
+        return new_line+"-Erfolgreiche Übertragungen: " + str(self.successful) + \
+               new_line+"-Fehlerhafte Übertragungen: " + str(self.errors) + \
+               new_line+"-Fehlerhafte Dateien: " + str(self.error_filenames)

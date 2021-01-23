@@ -18,4 +18,5 @@ class DBLog:
         if html:
             new_line = "<br>"
 
-        return "DBLog"
+        return new_line+"-Erfolgreiche Übertragungen: " + str(self.successful)+\
+            new_line+"-Fehlerhafte Übertragungen: " + str(self.errors)

@@ -18,13 +18,19 @@ class LogItem:
         if html:
             new_line = "<br>"
 
-        complete_log = "Log von Backup (" + self.backup_name + "):"
+        line_separator = "######################"
+
+        complete_log = line_separator
+
+        complete_log += new_line+"Log von Backup (" + self.backup_name + "):"
 
         if self.db_log is not None:
-            complete_log += new_line+" - DB: " + self.db_log.to_string(html)
+            complete_log += new_line+"###DB###" + self.db_log.to_string(html)
 
         if self.ftp_log is not None:
-            complete_log += new_line+" - FTP: " + self.ftp_log.to_string(html)
+            complete_log += new_line+new_line+"###FTP###" + self.ftp_log.to_string(html)
+
+        complete_log += new_line + line_separator
 
         return complete_log
 
