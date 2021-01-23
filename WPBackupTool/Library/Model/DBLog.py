@@ -1,0 +1,21 @@
+class DBLog:
+    def __init__(self):
+        self.successful = []
+        self.error = []
+        pass
+
+    def success(self, name):
+        self.successful.append(name)
+
+    def error(self, name):
+        self.error.append(name)
+
+    def was_success(self):
+        return len(self.error) is 0
+
+    def to_string(self, html=False):
+        new_line = "\n"
+        if html:
+            new_line = "<br>"
+
+        return "DBLog"
