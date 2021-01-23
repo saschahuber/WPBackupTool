@@ -2,7 +2,8 @@ from WPBackupTool.Library.Config.SMPTConfig import SMPTConfig
 
 
 class MailConfig:
-    def __init__(self, smpt_config, sender_name, sender_mail, receiver_name, receiver_mail):
+    def __init__(self, only_report_error, smpt_config, sender_name, sender_mail, receiver_name, receiver_mail):
+        self.only_report_error = only_report_error
         self.smpt_config = smpt_config
         self.sender_name = sender_name
         self.sender_mail = sender_mail
@@ -11,6 +12,10 @@ class MailConfig:
 
     @staticmethod
     def from_config(config):
+        only_report_error = False
+        if 'only_report_error' in config:
+            only_report_error = config['only_report_error']
+
         smpt_config = SMPTConfig.from_config(config["smpt"])
 
         sender_name = config["sender"]["name"]
@@ -21,4 +26,4 @@ class MailConfig:
         if sender_name is None or sender_mail is None or receiver_name is None or receiver_mail is None:
             raise AttributeError()
 
-        return MailConfig(smpt_config, sender_name, sender_mail, receiver_name, receiver_mail)
+        return MailConfig(only_report_error, smpt_config, sender_name, sender_mail, receiver_name, receiver_mail)

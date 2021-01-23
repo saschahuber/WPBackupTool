@@ -5,6 +5,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 from WPBackupTool.Library.Model.LogItem import LogItem
+from WPBackupTool.Utils.Logger import Logger
 
 
 class MailService:
@@ -44,8 +45,12 @@ class MailService:
         return server
 
     def send_result_mail(self, receiver_name, receiver_mail, results):
+        if len(results) is 0:
+            Logger.log("Nothing to report", self.__class__.__name__)
+            return
+
         today = date.today()
-        subject = "Backups vom "+str(today.strftime('%d.%m.%Y'))
+        subject = "Backup Report ("+str(today.strftime('%d.%m.%Y'))+")"
 
         message = LogItem.many_to_string(results, html=True)
 

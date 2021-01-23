@@ -39,25 +39,32 @@ class WPBackupTool():
                                    mail_config.sender_name,
                                    mail_config.sender_mail)
 
-        mail_service.send_result_mail(mail_config.receiver_name, mail_config.receiver_mail, results)
+        results_to_report = []
+        for result in results:
+            if mail_config.only_report_error and result.was_success():
+                continue
+            results_to_report.append(result)
+
+        mail_service.send_result_mail(mail_config.receiver_name, mail_config.receiver_mail, results_to_report)
 
     def do_website_backups(self):
-        threads = []
         backup_results = []
 
-        for website_config in self.config.backup_configs:
-            if(self.multithreading):
-                thread = ThreadWithReturnValue(target=self.do_website_backup, args=(website_config,))
+        if self.multithreading:
+            threads = []
 
+            for website_config in self.config.backup_configs:
+                thread = ThreadWithReturnValue(target=self.do_website_backup, args=(website_config,))
                 threads.append(thread)
 
+            for thread in threads:
                 thread.start()
-            else:
-                backup_results.append(self.do_website_backup(website_config))
 
-        #Wait for all threads to finish
-        for thread in threads:
-            backup_results.append(thread.join())
+            for thread in threads:
+                backup_results.append(thread.join())
+        else:
+            for website_config in self.config.backup_configs:
+                backup_results.append(self.do_website_backup(website_config))
 
         return backup_results
 
@@ -168,7 +175,7 @@ class WPBackupTool():
 
             successful, errors, error_filenames = ftp_backup.startBackup(ftp_config.host, ftp_config.username,
                                                                         ftp_config.password, ftp_config.server_dir,
-                                                                        backup_path, ignore_dirs, interval=0.05)
+                                                                        backup_path, ignore_dirs, interval=0.01)
             ftp_log.success(successful)
             ftp_log.error(errors)
             ftp_log.error_files(error_filenames)

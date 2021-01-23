@@ -14,7 +14,7 @@ class FTPLog:
         self.error_filenames.extend(files)
 
     def was_success(self):
-        return self.errors is 0
+        return self.errors is 0 and len(self.error_filenames) is 0
 
     def to_string(self, html=False):
         new_line = "\n"

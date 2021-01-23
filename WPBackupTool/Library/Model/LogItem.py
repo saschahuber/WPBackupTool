@@ -22,7 +22,11 @@ class LogItem:
 
         complete_log = line_separator
 
-        complete_log += new_line+"Log von Backup (" + self.backup_name + "):"
+        status = "FEHLERHAFT"
+        if self.was_success():
+            status = "ERFOLG"
+
+        complete_log += new_line+self.backup_name+" ("+status+"):"
 
         if self.db_log is not None:
             complete_log += new_line+"###DB###" + self.db_log.to_string(html)
@@ -36,11 +40,11 @@ class LogItem:
 
     def was_success(self):
         if self.db_log is not None:
-            if not self.db_log.was_success:
+            if not self.db_log.was_success():
                 return False
 
         if self.ftp_log is not None:
-            if not self.ftp_log.was_success:
+            if not self.ftp_log.was_success():
                 return False
 
         return True
