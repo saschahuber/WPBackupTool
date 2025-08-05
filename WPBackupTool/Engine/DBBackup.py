@@ -15,19 +15,19 @@ class DBBackup():
         self.backup_name = backup_name
 
     def databaseBackup(self):
-        today_backup_path = os.path.join(self.path, self.backup_name+"-"+time.strftime('%Y-%m-%d'))+".sql"
+        today_backup_path = os.path.join(self.path, self.db_name+"-"+time.strftime('%Y-%m-%d'))+".sql"
 
         try:
             os.stat(self.path)
         except:
             os.makedirs(self.path)
 
-        Logger.log("Starting backup of database " + self.db_name, "DB_BACKUP_" + self.backup_name)
+        Logger.log("Starting backup of database " + self.db_name, "DB_BACKUP_" + self.db_name)
 
         mysql_auth = "-h " + self.db_host + " -u " + self.db_user + " -p" + self.db_password + " " + self.db_name
 
         dumpcmd = "sudo mysqldump "+mysql_auth+" > " + pipes.quote(today_backup_path)
-        Logger.log(dumpcmd, "DB_BACKUP_" + self.backup_name)
+        Logger.log(dumpcmd, "DB_BACKUP_" + self.db_name)
         os.system(dumpcmd)
 
         success = False
